@@ -1,13 +1,14 @@
-# 🛁 Brilho & Splash!
+# Brilho & Splash!
 
+> Gabriel Bisso e Maria Virginia Souza
 > Uma coleção de minigames educativos e interativos para ensinar hábitos de higiene e organização para crianças de forma divertida.
 
 
-## 📖 Sobre o Projeto
+## Sobre o Projeto
 
 **Brilho & Splash!** é uma aplicação web desenvolvida para auxiliar no aprendizado de crianças com deficiências cognitivas leves a moderadas sobre rotinas diárias, hábitos de higiene e atividades domésticas. Através de uma interface lúdica, colorida e animada, as crianças realizam tarefas como escovar os dentes, tomar banho, lavar as mãos e organizar o quarto. O projeto foi construído focado em simplicidade de execução, sem instalação complexa.
 
-## 🎮 Minigames Disponíveis
+## Minigames Disponíveis
 
 O projeto conta com 6 minigames distintos:
 
@@ -18,14 +19,14 @@ O projeto conta com 6 minigames distintos:
 5.  **🦷 Corrida Contra o Tempo:** Use o mouse como escova para limpar os dentes e clique nos germes para eliminá-los antes que o tempo acabe.
 6.  **👐 Laboratório das Mãos:** Um passo a passo interativo ensinando a sequência correta de lavar as mãos (água, sabão, esfregar, enxaguar e secar).
 
-## 🚀 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 * **HTML5:** Estrutura semântica do projeto.
 * **CSS3 (Tailwind CSS):** Estilização rápida, responsiva e moderna via CDN.
 * **JavaScript (Vanilla):** Lógica de todos os minigames, manipulação do DOM e animações.
 * **Google Fonts:** Tipografias *Fredoka* e *Poppins* para um visual infantil e amigável.
 
-## 📂 Estrutura de Arquivos
+## Estrutura de Arquivos
 
 Para que o jogo funcione perfeitamente, a estrutura de pastas deve ser a seguinte:
 
