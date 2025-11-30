@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brilho & Splash!</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'jogo-verde': '#D4F5B0', 
+                        'jogo-azul': '#70D7E7',   
+                        'jogo-amarelo': '#FFD54f',
+                        'jogo-vermelho': '#FF8D80',
+                        'jogo-texto': '#37474F',
+                        'jogo-roxo': '#B39DDB'
+                    },
+                    fontFamily: {
+                        'sans': ['Poppins', 'sans-serif'],
+                        'fredoka': ['Fredoka', 'cursive'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 3s infinite',
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+
+            font-family: 'Poppins', sans-serif;
+
+            background-color: #D4F5B0;
+
+            background-image: url('icons/fundo_brilho_splash.png');
+
+            background-position: center;
+
+            background-size: cover;
+
+            background-repeat: no-repeat;
+
+            color: #374737;
+
+            overflow-x: hidden;
+
+            overflow-y: auto;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            min-height: 100vh;
+
+            padding: 1rem;
+
+            user-select: none;
+
+            cursor: default;
+
+        }
+
+
+
+        .tela-jogo {
+
+            display: none;
+
+            width: 100%;
+
+            max-width: 1024px;
+
+            margin: auto;
+
+            padding: 1.5rem;
+
+            border-radius: 30px;
+
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+
+            flex-direction: column;
+
+            align-items: center;
+
+            background-color: rgba(255, 255, 255, 0.95);
+
+            backdrop-filter: blur(10px);
+
+            border: 8px solid #fff;
+
+            min-height: 650px;
+
+            position: relative;
+
+        }
+
+       
+
+        .titulo-jogo {
+
+            font-family: 'Fredoka', cursive;
+
+            font-size: 3rem;
+
+            line-height: 1.1;
+
+            color: #37474F;
+
+            text-shadow: 2px 2px 0px #FFD54f;
+
+            margin-bottom: 1rem;
+
+            text-align: center;
+
+        }
+
+
+
+        /* Animações e Efeitos */
+
+        .shake {
+
+            animation: tremer 0.5s;
+
+            animation-iteration-count: infinite;
+
+        }
+
+
+
+        @keyframes tremer {
+
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+
+        }
+
+
+
+        @keyframes pop {
+
+            0% { transform: scale(0.8); opacity: 0; }
+
+            100% { transform: scale(1.2); opacity: 1; }
+
+        }
+
+        .pop-in { animation: pop 0.3s ease-out forwards; }
+
+
+
+        @keyframes slideIn {
+
+            from { transform: translateX(200%); }
+
+            to { transform: translateX(0); }
+
+        }
+
+
+
+        /* Animação da Esteira Rodando */
+
+        @keyframes scrollBelt {
+
+            from { background-position: 0 0; }
+
+            to { background-position: 56px 0; }
+
+        }
+
+        .animate-belt {
+
+            animation: scrollBelt 1s linear infinite;
+
+        }
+
+
+
+        /* Estilos Visuais Específicos */
+
+        .item-sujo { filter: sepia(0.8) hue-rotate(-30deg) saturate(1.5) contrast(0.9); }
+
+        .item-limpo { filter: brightness(1.1) drop-shadow(0 0 15px #3b82f6); }
+
+       
+
+        .cursor-none { cursor: none; }
+
+
+
+        @keyframes popBubble {
+
+            0% { transform: scale(1); opacity: 0.8; }
+
+            100% { transform: scale(1.5); opacity: 0; }
+
+        }
+
+        .pop-effect { animation: popBubble 0.4s forwards; }
+    </style>
+</head>
+<body>
+
+    <div id="telaInicial" class="tela-jogo flex flex-col items-center justify-center gap-6 pt-10">
+        <h1 class="titulo-jogo text-5xl md:text-6xl mb-4 font-semibold text-jogo-texto">BRILHO & SPLASH!</h1>
+        <div class="w-80 h-80 relative z-10 flex justify-center items-center">
+            <img src="icons/dr.sol_e_lupinha.png" alt="Dr. Sol e Lupinha" class="w-full h-full object-contain drop-shadow-lg">
+        </div>
+        <div class="w-full flex flex-col items-center gap-4">
+            <button id="btnIniciar" class="w-full max-w-xs bg-jogo-azul hover:bg-cyan-400 text-white font-bold text-3xl py-4 px-8 rounded-2xl shadow-[0_6px_0_rgb(0,0,0,0.2)] active:shadow-none active:translate-y-1 transition-all border-4 border-white">
+                INICIAR
+            </button>
+            <button id="btnAjuda" class="w-full max-w-xs bg-jogo-vermelho hover:bg-red-400 text-white font-bold text-3xl py-4 px-8 rounded-2xl shadow-[0_6px_0_rgb(0,0,0,0.2)] active:shadow-none active:translate-y-1 transition-all border-4 border-white">
+                AJUDA
+            </button>
+        </div>
+    </div>
+
+    <div id="telaMenu" class="tela-jogo">
+        <div class="flex justify-between w-full items-center mb-2 px-2"> 
+            <h1 class="titulo-jogo text-jogo-texto">Escolha um jogo</h1>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 w-full h-full content-center pb-2">
+            
+            <div class="aspect-square bg-yellow-50 rounded-2xl border-4 border-yellow-200 cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:z-50 relative overflow-hidden group" onclick="iniciarJogo('jogoBanho')">
+                <img src="icons/banho.png" alt="Jogo Banho" class="w-full h-full object-cover">
+            </div>
+
+            <div class="aspect-square bg-red-50 rounded-2xl border-4 border-red-200 cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:z-50 relative overflow-hidden group" onclick="iniciarJogo('jogoCama')">
+                <img src="icons/cama.png" alt="Jogo Cama" class="w-full h-full object-cover">
+            </div>
+
+            <div class="aspect-square bg-green-50 rounded-2xl border-4 border-green-200 cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:z-50 relative overflow-hidden group" onclick="iniciarJogo('jogoBrinquedos')">
+                <img src="icons/brinquedos.png" alt="Jogo Brinquedos" class="w-full h-full object-cover">
+            </div>
+
+            <div class="aspect-square bg-orange-50 rounded-2xl border-4 border-orange-200 cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:z-50 relative overflow-hidden group" onclick="iniciarJogo('jogoRoupas')">
+                <img src="icons/roupas.png" alt="Jogo Roupas" class="w-full h-full object-cover">
+            </div>
+
+            <div class="aspect-square bg-cyan-50 rounded-2xl border-4 border-cyan-200 cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:z-50 relative overflow-hidden group" onclick="iniciarJogo('jogoDentes')">
+                <img src="icons/dentes.png" alt="Jogo Dentes" class="w-full h-full object-cover">
+            </div>      
+
+            <div class="aspect-square bg-gray-50 rounded-2xl border-4 border-gray-200 cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:z-50 relative overflow-hidden group" onclick="iniciarJogo('jogoMaos')">
+                <img src="icons/maos.png" alt="Jogo Mãos" class="w-full h-full object-cover">
+            </div>
+        </div>
+
+        <button onclick="irPara('telaInicial')" class="self-start ml-2 mt-4 bg-jogo-azul hover:bg-cyan-400 text-white px-10 py-3 rounded-full font-bold text-xl transition shadow-lg border-4 border-white">
+            VOLTAR
+        </button>
+    </div>
+
+    <div id="telaAjuda" class="tela-jogo bg-blue-50 justify-center">
+        <h2 class="titulo-jogo text-4xl md:text-5xl text-jogo-texto mb-8">COMO BRINCAR?</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl px-4">
+            
+            <div class="bg-white p-6 rounded-3xl shadow-lg border-4 border-blue-100 flex flex-col items-center transform hover:scale-105 transition duration-300">
+                <div class="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center text-5xl mb-4 shadow-sm">
+                    👆
+                </div>
+                <h3 class="text-2xl font-bold text-jogo-texto mb-2 font-fredoka">1. Escolha</h3>
+                <p class="text-center text-gray-500">Toque em um dos jogos disponíveis no menu para começar uma missão.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-lg border-4 border-green-100 flex flex-col items-center transform hover:scale-105 transition duration-300">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-5xl mb-4 shadow-sm">
+                    🎮
+                </div>
+                <h3 class="text-2xl font-bold text-jogo-texto mb-2 font-fredoka">2. Jogue</h3>
+                <p class="text-center text-gray-500">Complete a tarefa: escove, lave, guarde ou organize!</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-lg border-4 border-orange-100 flex flex-col items-center transform hover:scale-105 transition duration-300">
+                <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center text-5xl mb-4 shadow-sm">
+                    🏆
+                </div>
+                <h3 class="text-2xl font-bold text-jogo-texto mb-2 font-fredoka">3. Ganhe</h3>
+                <p class="text-center text-gray-500">Faça tudo certinho e você ganhará os parabéns do Dr. Sol!</p>
+            </div>
+        </div>
+
+        <div class="mt-8 bg-white/60 px-8 py-4 rounded-xl border border-gray-200">
+            <p class="text-lg text-gray-600 font-bold flex items-center gap-2">
+                <span class="text-2xl">💡</span> Dica: Peça ajuda para um adulto se precisar!
+            </p>
+        </div>
+
+        <button onclick="irPara('telaInicial')" class="mt-10 bg-jogo-azul hover:bg-cyan-400 text-white px-10 py-3 rounded-full font-bold text-xl transition shadow-lg border-4 border-white">
+            VOLTAR
+        </button>
+    </div>
+
+    <div id="telaCelebracao" class="tela-jogo bg-jogo-verde flex-col justify-center items-center">
+        
+        <h1 class="text-5xl md:text-7xl font-bold text-jogo-amarelo drop-shadow-[0_4px_0_rgba(0,0,0,0.2)] mb-4">PARABÉNS!</h1>
+        
+        <div class="relative w-64 h-64 mb-8">
+            <div class="absolute inset-0"></div>
+            
+            <div class="relative w-full h-full flex justify-center items-center">
+                <img src="icons/dr.sol.png" alt="Dr. Sol" class="w-full h-full object-contain p-2">
+            </div>
+
+            <div class="absolute -right-16 top-0 bg-white p-4 rounded-xl shadow-lg border-2 border-jogo-azul w-48 transform rotate-12 animate-[pop_0.5s_ease-out]">
+                <p class="text-lg font-bold text-jogo-texto">Muito bem! Você brilhou!</p>
+                <div class="absolute bottom-0 -left-2 w-4 h-4 bg-white transform rotate-45"></div>
+            </div>
+        </div>
+
+        <button id="btnContinuar" class="bg-jogo-azul text-white font-bold text-2xl py-3 px-12 rounded-full shadow-lg hover:scale-105 transition transform border-4 border-white">
+            VOLTAR
+        </button>
+    </div>
+
+    <div id="jogoBrinquedos" class="tela-jogo bg-yellow-50">
+        <h2 class="titulo-jogo text-3xl">O VILÃO BAGUNÇA PASSOU!</h2>
+        <p class="mb-2">Siga o caminho, guarde tudo na caixa e salve a Lupinha!</p>
+        <div class="w-full max-w-2xl flex items-center space-x-2 mb-4">
+            <span class="text-2xl">😈</span>
+            <div class="flex-1 bg-gray-300 h-6 rounded-full overflow-hidden border-2 border-purple-800 relative">
+                <div id="barraVilao" class="bg-purple-600 h-full w-0 transition-all duration-100 ease-linear"></div>
+            </div>
+            <span class="text-2xl">🏰</span>
+        </div>
+        
+        <div class="relative w-full max-w-3xl flex-1 bg-green-100 rounded-xl border-4 border-green-300 overflow-hidden shadow-inner mb-4" id="salaBrinquedos">
+            
+            <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 800 600" preserveAspectRatio="none">
+                <path d="M 50 50 Q 200 400 400 300 T 700 500" stroke="#94a3b8" stroke-width="8" fill="none" stroke-dasharray="20, 20" stroke-linecap="round" class="opacity-50"/>
+            </svg>
+
+            <div class="absolute bottom-2 right-2 w-40 h-32 bg-amber-700 rounded-t-lg border-4 border-amber-900 flex items-end justify-center z-10 opacity-90 shadow-2xl">
+                <span class="text-white font-bold mb-2 text-2xl">CAIXA</span>
+            </div>
+
+            <div id="lupinhaGame" class="hidden absolute inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm transition-all duration-500">
+                <img src="icons/lupinha.png" alt="Lupinha encontrada" class="w-48 h-48 object-contain animate-bounce drop-shadow-2xl">
+            </div>
+        </div>
+        
+        <button onclick="voltarMenu()" class="mt-10 bg-jogo-azul hover:bg-cyan-400 text-white px-10 py-3 rounded-full font-bold text-xl transition shadow-lg border-4 border-white">
+            VOLTAR
+        </button>
+    </div>
+
+    <div id="jogoCama" class="tela-jogo bg-indigo-50">
+        <h2 class="titulo-jogo text-3xl">ARRUME A CAMA!</h2>
+        <p class="mb-6 text-gray-600">Clique onde está bagunçado para deixar tudo organizado.</p>
+
+        <div class="relative w-full max-w-2xl h-80 flex flex-col items-center justify-center">
+            
+            <div class="absolute bottom-0 w-3/4 h-24 bg-red-100 rounded-[100%] translate-y-4 opacity-70"></div>
+
+            <div class="relative w-96 h-64 bg-white rounded-2xl shadow-2xl border-b-8 border-gray-200 flex flex-col overflow-hidden transform hover:scale-[1.01] transition duration-500">
+                <div class="h-20 bg-amber-700 w-full border-b-8 border-amber-800 flex justify-center space-x-6 items-end pb-3 relative z-10 shadow-md">
+                    <div id="travesseiro1" onclick="arrumarCama('t1')" class="w-28 h-16 bg-white rounded-2xl border-2 border-gray-100 shadow-[inset_0_-4px_6px_rgba(0,0,0,0.05)] cursor-pointer transform -rotate-12 hover:bg-blue-50 transition-all duration-500 relative group">
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-1 bg-gray-100 rounded-full opacity-0 group-hover:opacity-100 transition"></div>
+                    </div>
+                    <div id="travesseiro2" onclick="arrumarCama('t2')" class="w-28 h-16 bg-white rounded-2xl border-2 border-gray-100 shadow-[inset_0_-4px_6px_rgba(0,0,0,0.05)] cursor-pointer transform translate-y-4 rotate-6 hover:bg-blue-50 transition-all duration-500 relative group">
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-1 bg-gray-100 rounded-full opacity-0 group-hover:opacity-100 transition"></div>
+                    </div>
+                </div>
+
+                <div class="flex-1 bg-blue-50 relative z-20 cursor-pointer overflow-hidden" onclick="arrumarCama('lencol')">
+                    <div id="lencolBaguncado" class="absolute inset-0 bg-blue-300 transition-all duration-700 ease-in-out origin-bottom-right transform skew-y-3 scale-110 shadow-inner">
+                        <div class="absolute top-0 right-0 w-full h-full bg-gradient-to-tr from-blue-400/30 to-transparent"></div>
+                        <span class="absolute top-10 left-10 text-blue-600 opacity-60 text-5xl animate-pulse">〰️</span>
+                        <span class="absolute bottom-10 right-20 text-blue-600 opacity-60 text-5xl animate-pulse delay-75">〰️</span>
+                    </div>
+                    <div id="lencolArrumado" class="absolute inset-0 bg-blue-400 opacity-0 transition-all duration-700 flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+                        <span class="text-white opacity-70 text-7xl drop-shadow-lg scale-110">✨</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex justify-center space-x-4 mt-8">
+            <div id="checkT1" class="bg-white px-4 py-2 rounded-full shadow-sm border-2 border-gray-100 text-gray-400 font-bold transition-colors duration-300 flex items-center gap-2"><span>🔲</span> Travesseiro 1</div>
+            <div id="checkT2" class="bg-white px-4 py-2 rounded-full shadow-sm border-2 border-gray-100 text-gray-400 font-bold transition-colors duration-300 flex items-center gap-2"><span>🔲</span> Travesseiro 2</div>
+            <div id="checkLen" class="bg-white px-4 py-2 rounded-full shadow-sm border-2 border-gray-100 text-gray-400 font-bold transition-colors duration-300 flex items-center gap-2"><span>🔲</span> Lençol</div>
+        </div>
+
+        <button onclick="voltarMenu()" class="mt-10 bg-jogo-azul hover:bg-cyan-400 text-white px-10 py-3 rounded-full font-bold text-xl transition shadow-lg border-4 border-white">
+            VOLTAR
+        </button>    
+    </div>
+
+    <div id="jogoBanho" class="tela-jogo bg-cyan-100">
+        <h2 class="titulo-jogo text-3xl">HORA DE ESFREGAR!</h2>
+        <p class="mb-4">Passe a esponja sobre a sujeira para limpar.</p>
+
+        <div class="relative w-64 h-80 bg-white rounded-full border-4 border-blue-300 flex items-center justify-center overflow-hidden select-none shadow-xl cursor-none" id="areaBanho">
+            <span class="text-9xl z-0">🧒</span>
+            <div id="camadaSujeira" class="absolute inset-0 z-10"> </div>
+            <div id="cursorEsponja" class="absolute w-16 h-16 pointer-events-none z-50 hidden md:flex items-center justify-center text-4xl drop-shadow-md">🧽</div>
+        </div>
+
+        <div class="mt-6 w-64 bg-white rounded-full h-6 border-2 border-blue-500 overflow-hidden">
+            <div id="barraLimpeza" class="bg-green-400 h-full w-0 transition-all duration-100"></div>
+        </div>
+        <p class="font-bold text-blue-600 mt-2">Limpeza: <span id="txtLimpeza">0%</span></p>
+
+        <button onclick="voltarMenu()" class="mt-10 bg-jogo-azul hover:bg-cyan-400 text-white px-10 py-3 rounded-full font-bold text-xl transition shadow-lg border-4 border-white">
+            VOLTAR
+        </button>
+    </div>
+
+    <div id="jogoRoupas" class="tela-jogo bg-pink-50">
+        <h2 class="titulo-jogo text-3xl">ESTEIRA MALUCA!</h2>
+        <p class="mb-4 text-center text-gray-600 font-medium">As roupas foram misturadas! Ponha a roupa <span class="text-red-500 font-bold">SUJA</span> no vermelho, e a roupa <span class="text-blue-500 font-bold">LIMPA</span> no azul.
+        </p>
+
+        <div class="h-56 w-full flex items-center justify-center bg-gray-300 rounded-xl border-y-8 border-gray-500 mb-8 relative overflow-hidden shadow-inner">
+            <div class="absolute inset-0 opacity-20 bg-[repeating-linear-gradient(45deg,#000_0,#000_20px,#333_20px,#333_40px)] animate-belt"></div>
+            <div class="relative z-10 p-6 bg-white/90 rounded-full shadow-2xl transition-transform duration-300 transform hover:scale-105" id="containerItem">
+                <div id="itemRoupa" class="text-9xl transition-all duration-300">❓</div>
+                <div id="overlayRoupa" class="absolute -top-2 -right-4 text-6xl animate-bounce drop-shadow-md filter blur-[0.5px]"></div>
+            </div>
+        </div>
+
+        <div class="flex justify-center space-x-12 w-full">
+            <button onclick="decisaoRoupa('suja')" class="group relative w-40 h-40 bg-red-100 rounded-3xl border-b-8 border-red-400 shadow-lg active:border-b-0 active:translate-y-2 active:shadow-none transition-all flex flex-col items-center justify-center hover:bg-red-200">
+                <span class="text-5xl mb-2 group-hover:rotate-12 transition transform">🧺</span>
+                <span class="text-red-600 font-black text-xl tracking-wider">SUJA</span>
+            </button>
+
+            <button onclick="decisaoRoupa('limpa')" class="group relative w-40 h-40 bg-blue-100 rounded-3xl border-b-8 border-blue-400 shadow-lg active:border-b-0 active:translate-y-2 active:shadow-none transition-all flex flex-col items-center justify-center hover:bg-blue-200">
+                <span class="text-5xl mb-2 group-hover:-rotate-12 transition transform">✨</span>
+                <span class="text-blue-600 font-black text-xl tracking-wider">LIMPA</span>
+            </button>
+        </div>
+
+        <div class="mt-8 flex space-x-3">
+            <div class="w-5 h-5 rounded-full bg-gray-300 transition-colors duration-300 border-2 border-gray-400" id="pontoR1"></div>
+            <div class="w-5 h-5 rounded-full bg-gray-300 transition-colors duration-300 border-2 border-gray-400" id="pontoR2"></div>
+            <div class="w-5 h-5 rounded-full bg-gray-300 transition-colors duration-300 border-2 border-gray-400" id="pontoR3"></div>
+            <div class="w-5 h-5 rounded-full bg-gray-300 transition-colors duration-300 border-2 border-gray-400" id="pontoR4"></div>
+            <div class="w-5 h-5 rounded-full bg-gray-300 transition-colors duration-300 border-2 border-gray-400" id="pontoR5"></div>
+        </div>
+
+        <button onclick="voltarMenu()" class="mt-10 bg-jogo-azul hover:bg-cyan-400 text-white px-10 py-3 rounded-full font-bold text-xl transition shadow-lg border-4 border-white">
+            VOLTAR
+        </button>
+    </div>
+
+    <div id="jogoDentes" class="tela-jogo justify-center">
+        
+        <div class="text-4xl font-bold text-jogo-azul mb-4 bg-white px-8 py-2 rounded-full shadow-md border-2 border-blue-200 flex items-center gap-2" id="timerDenteDisplay">
+            <span>⏱️</span> 30s
+        </div>
+
+        <h2 class="titulo-jogo text-3xl mb-2">ATAQUE DOS GERMES!</h2>
+        
+        <p class="mb-2 text-center text-gray-600 max-w-lg">
+            Clique nos germes <span class="text-green-500 font-bold">verdes</span> e 
+            passe a escova nos <span class="text-yellow-500 font-bold">amarelos</span>!
+        </p>
+
+        <div class="relative bg-red-300 w-full max-w-lg h-72 rounded-[60px] border-8 border-red-400 flex items-center justify-center shadow-[inset_0_-10px_20px_rgba(0,0,0,0.1)] overflow-hidden p-6 cursor-none mt-10" id="areaBoca">
+            
+            <div class="grid grid-cols-3 gap-8 w-full justify-items-center relative z-10" id="gradeDentes"></div>
+
+            <div id="cursorEscova" class="absolute w-24 h-24 pointer-events-none z-50 hidden md:flex items-center justify-center text-6xl drop-shadow-md -rotate-45">
+                🪥
+            </div>
+        </div>
+
+        <div class="w-full max-w-md bg-gray-200 rounded-full h-6 my-8 overflow-hidden border-2 border-gray-400 shadow-inner">
+            <div id="progressoBoca" class="bg-blue-400 h-full w-0 transition-all duration-300 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-full bg-white opacity-20 transform -skew-x-12 translate-x-[-50%] animate-pulse"></div>
+            </div>
+        </div>
+
+        <button onclick="voltarMenu()" class="mt-10 bg-jogo-azul hover:bg-cyan-400 text-white px-10 py-3 rounded-full font-bold text-xl transition shadow-lg border-4 border-white">
+            VOLTAR
+        </button>
+    </div>
+
+    <div id="jogoMaos" class="tela-jogo bg-orange-50">
+        <h2 class="titulo-jogo text-3xl md:text-5xl text-center">Laboratório das Mãos</h2>
+        
+        <div class="flex items-center justify-center gap-2 md:gap-4 mb-4 w-full px-2 overflow-x-auto">
+            <div id="step1" class="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gray-300 flex items-center justify-center text-lg md:text-2xl transition-all">💧</div>
+            <div class="w-2 md:w-4 h-1 bg-gray-300"></div>
+            <div id="step2" class="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gray-300 flex items-center justify-center text-lg md:text-2xl transition-all">🧼</div>
+            <div class="w-2 md:w-4 h-1 bg-gray-300"></div>
+            <div id="step3" class="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gray-300 flex items-center justify-center text-lg md:text-2xl transition-all">👐</div>
+            <div class="w-2 md:w-4 h-1 bg-gray-300"></div>
+            <div id="step4" class="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gray-300 flex items-center justify-center text-lg md:text-2xl transition-all">🚿</div>
+            <div class="w-2 md:w-4 h-1 bg-gray-300"></div>
+            <div id="step5" class="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gray-300 flex items-center justify-center text-lg md:text-2xl transition-all">🧻</div>
+        </div>
+
+        <p id="instrucaoMaos" class="text-lg md:text-2xl text-orange-600 font-bold mb-4 bg-white px-6 py-2 rounded-full shadow border-2 border-orange-100 transition-all text-center">
+            1. Toque na torneira para abrir
+        </p>
+
+        <div class="relative w-full max-w-md md:max-w-lg h-72 md:h-96 bg-white rounded-3xl border-4 border-gray-200 shadow-lg flex flex-col items-center pt-4 overflow-hidden select-none">
+            
+            <div id="btnTorneira" class="absolute top-0 right-8 md:right-12 flex flex-col items-center z-50 cursor-pointer hover:scale-105 transition active:scale-95" onclick="interagirMao('torneira')">
+                <div class="w-4 h-8 bg-gray-400"></div>
+                <div class="w-16 md:w-20 h-6 md:h-8 bg-gray-500 rounded-full flex items-center justify-end pr-1 shadow-md">
+                    <div class="w-6 h-6 md:w-7 md:h-7 bg-blue-500 rounded-full border-2 border-white"></div> 
+                </div>
+                <div id="aguaCaindo" class="w-6 md:w-8 bg-blue-300 opacity-70 transition-all duration-300 rounded-b-lg" style="height: 0px;"></div>
+            </div>
+
+            <div id="btnSabao" class="absolute top-16 md:top-24 left-6 md:left-10 cursor-pointer hover:scale-110 transition active:scale-95 z-50 group" onclick="interagirMao('sabao')">
+                <div class="w-16 h-24 md:w-20 md:h-32 bg-pink-300 rounded-xl border-4 border-pink-400 flex items-center justify-center shadow-lg relative">
+                    <span class="text-white font-bold text-xs md:text-sm tracking-widest drop-shadow-md">SABÃO</span>
+                </div>
+                <div class="absolute -bottom-2 w-full h-2 bg-black opacity-20 rounded-full"></div>
+            </div>
+
+            <div class="mt-auto mb-4 text-8xl md:text-[8rem] relative transition transform active:scale-95 z-10 pointer-events-none" id="atorMaos" onclick="interagirMao('maos')">
+                <span id="iconeMao">✋</span>
+                
+                <div id="bolhasContainer" class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-500">
+                    <span class="text-4xl absolute -top-4 left-0 animate-bounce">🫧</span>
+                    <span class="text-4xl absolute top-0 right-0 animate-bounce delay-100">🫧</span>
+                    <span class="text-4xl absolute bottom-0 left-6 animate-bounce delay-200">🫧</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="areaToalha" class="hidden mt-4 bg-green-100 p-4 rounded-xl border-2 border-green-400 cursor-pointer hover:bg-green-200 shadow-md" onclick="interagirMao('toalha')">
+            <span class="text-4xl md:text-5xl">🧻</span> 
+            <span class="font-bold text-green-800 text-lg md:text-xl ml-2">Secar Mãos</span>
+        </div>
+
+        <div id="barraEsfregarContainer" class="w-full max-w-sm h-6 md:h-8 bg-gray-200 rounded-full mt-4 hidden overflow-hidden border border-gray-400 shadow-inner">
+            <div id="progressoEsfregar" class="bg-orange-400 h-full w-0 transition-all duration-100"></div>
+        </div>
+
+        <button onclick="voltarMenu()" class="mt-8 bg-jogo-azul hover:bg-cyan-400 text-white px-10 py-3 rounded-full font-bold text-xl shadow-lg">VOLTAR</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
