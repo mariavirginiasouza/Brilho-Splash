@@ -1,6 +1,5 @@
 # Brilho & Splash!
 
-> Gabriel Bisso e Maria Virginia Souza
 > Uma coleção de minigames educativos e interativos para ensinar hábitos de higiene e organização para crianças de forma divertida.
 
 
